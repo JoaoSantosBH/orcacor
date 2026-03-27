@@ -1,0 +1,91 @@
+<resources>
+    <!-- App -->
+    <string name="app_name">OrcaCor</string>
+    <string name="app_subtitle">Orçamento de Pintura</string>
+
+    <!-- Navigation tabs -->
+    <string name="tab_budget">Orçamento</string>
+    <string name="tab_historic">Histórico</string>
+    <string name="tab_profile">Perfil</string>
+    <string name="tab_instructions">Instruções</string>
+
+    <!-- Auth -->
+    <string name="login_title">Entrar</string>
+    <string name="register_title">Criar conta</string>
+    <string name="field_email">E-mail</string>
+    <string name="field_password">Senha</string>
+    <string name="field_name">Nome completo</string>
+    <string name="field_phone">Celular</string>
+    <string name="field_confirm_password">Confirmar senha</string>
+    <string name="btn_login">Entrar</string>
+    <string name="btn_register">Cadastrar</string>
+    <string name="btn_logout">Sair</string>
+    <string name="link_create_account">Não tem conta? Cadastre-se</string>
+    <string name="link_already_have_account">Já tenho conta</string>
+
+    <!-- Budget -->
+    <string name="budget_title">Novo Orçamento</string>
+    <string name="btn_new_budget">Novo Orçamento</string>
+    <string name="btn_add_room">+ Cômodo</string>
+    <string name="btn_generate_report">Relatório</string>
+    <string name="field_recipient_name">Nome do profissional de pintura</string>
+    <string name="field_recipient_email">E-mail do profissional</string>
+    <string name="label_rooms">Cômodos</string>
+    <string name="label_total_area">Área total</string>
+
+    <!-- Room Form -->
+    <string name="room_form_title">Adicionar Cômodo</string>
+    <string name="field_room_name">Nome do cômodo</string>
+    <string name="field_room_kind">Tipo de cômodo</string>
+    <string name="field_width">Largura</string>
+    <string name="field_height">Altura</string>
+    <string name="field_length">Comprimento</string>
+    <string name="field_coats">Número de demãos</string>
+    <string name="field_color">Cor desejada</string>
+    <string name="field_observation">Observação</string>
+    <string name="label_wall_is_new">Parede em reboco (nova)</string>
+    <string name="label_wall_is_new_desc">Calcular seladora e massa corrida</string>
+    <string name="btn_save_room">Salvar Cômodo</string>
+    <string name="label_preview">Resumo calculado</string>
+    <string name="label_walls_area">Paredes</string>
+    <string name="label_ceiling_area">Teto</string>
+    <string name="label_total_net">Total líquido</string>
+    <string name="section_accessories">Acessórios</string>
+    <string name="section_doors">Portas</string>
+    <string name="section_windows">Janelas</string>
+    <string name="section_mirrors">Espelhos</string>
+    <string name="section_closets">Armários</string>
+    <string name="btn_add_accessory">Adicionar</string>
+
+    <!-- Report -->
+    <string name="report_title">Relatório</string>
+    <string name="label_recipient">Destinatário</string>
+    <string name="label_elaborated_by">Elaborado por</string>
+    <string name="section_rooms">Cômodos</string>
+    <string name="section_materials">Materiais Estimados</string>
+    <string name="btn_share_pdf">Compartilhar PDF</string>
+    <string name="unit_m2">m²</string>
+    <string name="unit_liters">L</string>
+    <string name="can_18l">18L</string>
+    <string name="can_36l">3,6L</string>
+    <string name="can_09l">0,9L</string>
+
+    <!-- Historic -->
+    <string name="historic_title">Histórico</string>
+    <string name="historic_empty">Nenhum orçamento salvo</string>
+    <string name="historic_empty_hint">Crie um orçamento na aba Orçamento</string>
+    <string name="delete_budget_title">Excluir orçamento</string>
+    <string name="delete_budget_confirm">Deseja excluir? Esta ação não pode ser desfeita.</string>
+    <string name="btn_confirm_delete">Excluir</string>
+    <string name="btn_cancel">Cancelar</string>
+
+    <!-- Profile -->
+    <string name="profile_title">Perfil</string>
+    <string name="btn_save_changes">Salvar alterações</string>
+    <string name="profile_saved">Perfil salvo com sucesso!</string>
+
+    <!-- Instructions -->
+    <string name="instructions_title">Instruções</string>
+    <string name="instructions_header">Como usar o OrcaCor</string>
+    <string name="instructions_subtitle">Siga os passos abaixo para gerar seu orçamento de pintura profissional.</string>
+</resources>
