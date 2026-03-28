@@ -56,3 +56,5 @@ google-services.json
 
 # Kotlin metadata cache
 .kotlin/
+iosApp/*.framework/
+iosApp/**/*.framework/
