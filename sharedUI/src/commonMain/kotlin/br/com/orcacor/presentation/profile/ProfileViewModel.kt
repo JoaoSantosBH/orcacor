@@ -1,17 +1,16 @@
 package br.com.orcacor.presentation.profile
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import br.com.orcacor.domain.entity.User
+import br.com.orcacor.domain.repository.UserRepository
 import br.com.orcacor.domain.usecase.auth.GetCurrentUserUseCase
 import br.com.orcacor.domain.usecase.auth.LogoutUseCase
-import br.com.orcacor.domain.repository.UserRepository
+import br.com.orcacor.util.safeLaunch
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.launch
 
 data class ProfileState(
     val user: User? = null,
@@ -64,7 +63,7 @@ class ProfileViewModel(
     }
 
     private fun load() {
-        viewModelScope.launch {
+        safeLaunch {
             val user = getCurrentUserUseCase.invoke()
             _state.value = _state.value.copy(
                 user = user,
@@ -78,7 +77,7 @@ class ProfileViewModel(
     private fun save() {
         val s = _state.value
         val user = s.user ?: return
-        viewModelScope.launch {
+        safeLaunch {
             _state.value = s.copy(isSaving = true)
             runCatching {
                 userRepository.saveUser(user.copy(name = s.name, email = s.email, phone = s.phone))
@@ -91,7 +90,7 @@ class ProfileViewModel(
     }
 
     private fun logout() {
-        viewModelScope.launch {
+        safeLaunch {
             logoutUseCase.invoke()
             _effects.send(ProfileEffect.NavigateToLogin)
         }

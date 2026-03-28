@@ -1,14 +1,15 @@
 package br.com.orcacor.navigation
 
+import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
 
-@Serializable object SplashDestination
-@Serializable object OnboardingDestination
-@Serializable object LoginDestination
-@Serializable object RegisterDestination
-@Serializable object HomeDestination
-@Serializable data class RoomFormDestination(val budgetId: String)
-@Serializable data class ReportDestination(val budgetId: String)
+@Serializable object SplashDestination : NavKey
+@Serializable object OnboardingDestination : NavKey
+@Serializable object LoginDestination : NavKey
+@Serializable object RegisterDestination : NavKey
+@Serializable object HomeDestination : NavKey
+@Serializable data class RoomFormDestination(val budgetId: String) : NavKey
+@Serializable data class ReportDestination(val budgetId: String) : NavKey
 
 // Bottom nav destinations
 @Serializable object BudgetTabDestination

@@ -1,5 +1,4 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
@@ -58,6 +57,7 @@ kotlin {
             implementation(libs.apollo.runtime)
             implementation(libs.kstore)
             implementation(libs.materialKolor)
+            api(compose.materialIconsExtended)
         }
 
         commonTest.dependencies {

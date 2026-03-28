@@ -1,7 +1,6 @@
 package br.com.orcacor.presentation.room
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import br.com.orcacor.domain.entity.Accessory
 import br.com.orcacor.domain.entity.AccessoryType
 import br.com.orcacor.domain.entity.ClosetKind
@@ -13,12 +12,12 @@ import br.com.orcacor.domain.entity.WindowKind
 import br.com.orcacor.domain.repository.MaterialConstantsRepository
 import br.com.orcacor.domain.usecase.room.AddRoomToBudgetUseCase
 import br.com.orcacor.domain.usecase.room.CalculateRoomAreaUseCase
+import br.com.orcacor.util.safeLaunch
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.launch
 
 data class RoomFormState(
     val budgetId: String = "",
@@ -150,7 +149,7 @@ class RoomFormViewModel(
             _state.value = s.copy(error = "Nome do cômodo obrigatório")
             return
         }
-        viewModelScope.launch {
+        safeLaunch {
             _state.value = _state.value.copy(isLoading = true)
             addRoomToBudgetUseCase.invoke(s.toRoom())
                 .onSuccess {
@@ -164,7 +163,7 @@ class RoomFormViewModel(
     }
 
     private fun loadKinds() {
-        viewModelScope.launch {
+        safeLaunch {
             _state.value = _state.value.copy(
                 windowKinds = materialConstantsRepository.getWindowKinds(),
                 doorKinds = materialConstantsRepository.getDoorKinds(),

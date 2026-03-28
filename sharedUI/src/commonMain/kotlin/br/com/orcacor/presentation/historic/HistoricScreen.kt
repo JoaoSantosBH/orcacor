@@ -36,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import br.com.orcacor.domain.entity.Budget
+import br.com.orcacor.util.formatFloat
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -133,7 +134,7 @@ private fun BudgetHistoryItem(budget: Budget, onClick: () -> Unit, onDelete: () 
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
-                    "${"%.2f".format(budget.totalArea)} m² • ${budget.status.name}",
+                    "${formatFloat(budget.totalArea)} m² • ${budget.status.name}",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

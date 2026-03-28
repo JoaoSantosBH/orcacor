@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import br.com.orcacor.domain.entity.Budget
 import br.com.orcacor.domain.usecase.budget.DeleteBudgetUseCase
 import br.com.orcacor.domain.usecase.budget.GetBudgetHistoryUseCase
+import br.com.orcacor.util.safeLaunch
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,7 +13,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.launch
 
 data class HistoricState(
     val budgets: List<Budget> = emptyList(),
@@ -51,14 +51,14 @@ class HistoricViewModel(
     fun onIntent(intent: HistoricIntent) {
         when (intent) {
             is HistoricIntent.DeleteBudget -> delete(intent.budgetId)
-            is HistoricIntent.OpenBudget -> viewModelScope.launch {
+            is HistoricIntent.OpenBudget -> safeLaunch {
                 _effects.send(HistoricEffect.NavigateToReport(intent.budgetId))
             }
         }
     }
 
     private fun delete(budgetId: String) {
-        viewModelScope.launch {
+        safeLaunch {
             deleteBudgetUseCase.invoke(budgetId)
         }
     }

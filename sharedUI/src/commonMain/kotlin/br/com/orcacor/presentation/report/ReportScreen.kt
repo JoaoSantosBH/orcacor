@@ -34,6 +34,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import br.com.orcacor.domain.entity.MaterialEstimate
 import br.com.orcacor.domain.entity.Report
 import br.com.orcacor.domain.entity.Room
+import br.com.orcacor.util.formatFloat
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -94,7 +95,7 @@ private fun ReportContent(report: Report) {
                     Text("Elaborado por: ${report.user.name}", style = MaterialTheme.typography.bodyMedium)
                     Spacer(Modifier.height(8.dp))
                     Text(
-                        "Área total: ${"%.2f".format(report.totalArea)} m²",
+                        "Área total: ${formatFloat(report.totalArea)} m²",
                         style = MaterialTheme.typography.headlineSmall,
                         color = MaterialTheme.colorScheme.primary
                     )
@@ -134,16 +135,16 @@ private fun RoomReportItem(room: Room) {
             ) {
                 Column {
                     Text("Paredes", style = MaterialTheme.typography.labelSmall)
-                    Text("${"%.2f".format(room.wallsArea)} m²", style = MaterialTheme.typography.bodySmall)
+                    Text("${formatFloat(room.wallsArea)} m²", style = MaterialTheme.typography.bodySmall)
                 }
                 Column {
                     Text("Teto", style = MaterialTheme.typography.labelSmall)
-                    Text("${"%.2f".format(room.ceilingArea)} m²", style = MaterialTheme.typography.bodySmall)
+                    Text("${formatFloat(room.ceilingArea)} m²", style = MaterialTheme.typography.bodySmall)
                 }
                 Column(horizontalAlignment = Alignment.End) {
                     Text("Total líquido", style = MaterialTheme.typography.labelSmall)
                     Text(
-                        "${"%.2f".format(room.totalSquareMeters)} m²",
+                        "${formatFloat(room.totalSquareMeters)} m²",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.primary
                     )
@@ -164,7 +165,7 @@ private fun MaterialReportItem(material: MaterialEstimate) {
             Text(material.name, style = MaterialTheme.typography.titleSmall)
             Spacer(Modifier.height(4.dp))
             Text(
-                "${"%.2f".format(material.totalLiters)} L (Rendimento: ${material.yieldPerLiter} m²/L)",
+                "${formatFloat(material.totalLiters)} L (Rendimento: ${material.yieldPerLiter} m²/L)",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

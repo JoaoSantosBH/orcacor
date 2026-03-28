@@ -37,6 +37,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import br.com.orcacor.domain.entity.Room
+import br.com.orcacor.util.formatFloat
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -129,7 +130,7 @@ fun BudgetScreen(
                         Column(horizontalAlignment = Alignment.End) {
                             Text("Área total", style = MaterialTheme.typography.labelMedium)
                             Text(
-                                "${"%.2f".format(state.budget!!.totalArea)} m²",
+                                "${formatFloat(state.budget!!.totalArea)} m²",
                                 style = MaterialTheme.typography.headlineSmall
                             )
                         }
@@ -182,7 +183,7 @@ private fun RoomItem(room: Room, onDelete: () -> Unit) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(room.name, style = MaterialTheme.typography.titleMedium)
                 Text(
-                    "${room.kind.name.lowercase().replaceFirstChar { it.uppercase() }} • ${"%.2f".format(room.totalSquareMeters)} m²",
+                    "${room.kind.name.lowercase().replaceFirstChar { it.uppercase() }} • ${formatFloat(room.totalSquareMeters)} m²",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

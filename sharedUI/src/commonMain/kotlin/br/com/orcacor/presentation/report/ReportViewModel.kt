@@ -1,15 +1,14 @@
 package br.com.orcacor.presentation.report
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import br.com.orcacor.domain.entity.Report
 import br.com.orcacor.domain.usecase.report.GenerateReportUseCase
+import br.com.orcacor.util.safeLaunch
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.launch
 
 data class ReportState(
     val report: Report? = null,
@@ -44,7 +43,7 @@ class ReportViewModel(
     }
 
     private fun load(budgetId: String) {
-        viewModelScope.launch {
+        safeLaunch {
             _state.value = ReportState(isLoading = true)
             generateReportUseCase.invoke(budgetId)
                 .onSuccess { report ->
@@ -58,7 +57,7 @@ class ReportViewModel(
 
     private fun sharePdf() {
         // PDF generation is platform-specific — will be handled via effect
-        viewModelScope.launch {
+        safeLaunch {
             _effects.send(ReportEffect.ShareFile(""))
         }
     }

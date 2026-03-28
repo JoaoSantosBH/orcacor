@@ -1,18 +1,17 @@
 package br.com.orcacor.presentation.auth
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import br.com.orcacor.domain.entity.User
 import br.com.orcacor.domain.usecase.auth.GetCurrentUserUseCase
 import br.com.orcacor.domain.usecase.auth.LoginUseCase
 import br.com.orcacor.domain.usecase.auth.LogoutUseCase
 import br.com.orcacor.domain.usecase.auth.RegisterUseCase
+import br.com.orcacor.util.safeLaunch
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.launch
 
 data class AuthState(
     val isLoading: Boolean = false,
@@ -58,7 +57,9 @@ class AuthViewModel(
     }
 
     private fun login(email: String, password: String) {
-        viewModelScope.launch {
+        safeLaunch(onError = { e ->
+            _state.value = _state.value.copy(isLoading = false, error = e.message ?: "Erro desconhecido")
+        }) {
             _state.value = _state.value.copy(isLoading = true, error = null)
             loginUseCase.invoke(email, password)
                 .onSuccess { user ->
@@ -72,7 +73,9 @@ class AuthViewModel(
     }
 
     private fun register(name: String, email: String, phone: String, password: String) {
-        viewModelScope.launch {
+        safeLaunch(onError = { e ->
+            _state.value = _state.value.copy(isLoading = false, error = e.message ?: "Erro desconhecido")
+        }) {
             _state.value = _state.value.copy(isLoading = true, error = null)
             registerUseCase.invoke(name, email, phone, password)
                 .onSuccess { user ->
@@ -86,7 +89,7 @@ class AuthViewModel(
     }
 
     private fun logout() {
-        viewModelScope.launch {
+        safeLaunch {
             logoutUseCase.invoke()
             _state.value = AuthState()
             _effects.send(AuthEffect.NavigateToLogin)
@@ -94,7 +97,7 @@ class AuthViewModel(
     }
 
     private fun checkSession() {
-        viewModelScope.launch {
+        safeLaunch {
             val user = getCurrentUserUseCase.invoke()
             _state.value = _state.value.copy(user = user)
             if (user != null) {

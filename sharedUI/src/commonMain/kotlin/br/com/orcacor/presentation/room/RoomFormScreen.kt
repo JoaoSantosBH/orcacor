@@ -48,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import br.com.orcacor.domain.entity.AccessoryType
 import br.com.orcacor.domain.entity.RoomKind
+import br.com.orcacor.util.formatFloat
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -334,16 +335,16 @@ fun RoomFormScreen(
                         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                             Column {
                                 Text("Paredes", style = MaterialTheme.typography.labelSmall)
-                                Text("${"%.2f".format(state.previewWallsArea)} m²")
+                                Text("${formatFloat(state.previewWallsArea)} m²")
                             }
                             Column {
                                 Text("Teto", style = MaterialTheme.typography.labelSmall)
-                                Text("${"%.2f".format(state.previewCeilingArea)} m²")
+                                Text("${formatFloat(state.previewCeilingArea)} m²")
                             }
                             Column(horizontalAlignment = Alignment.End) {
                                 Text("Total líquido", style = MaterialTheme.typography.labelSmall)
                                 Text(
-                                    "${"%.2f".format(state.previewTotalArea)} m²",
+                                    "${formatFloat(state.previewTotalArea)} m²",
                                     style = MaterialTheme.typography.titleMedium,
                                     color = MaterialTheme.colorScheme.primary
                                 )
