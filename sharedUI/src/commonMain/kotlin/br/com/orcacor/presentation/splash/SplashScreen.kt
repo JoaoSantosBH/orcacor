@@ -74,3 +74,15 @@ fun SplashScreen(
         }
     }
 }
+
+
+@Preview
+@Composable
+fun SplashScreenPreview() {
+    SplashScreen(
+        onNavigateToOnboarding = {},
+        onNavigateToHome = {},
+        isLoggedIn = false,
+        isFirstLaunch = true
+    )
+}

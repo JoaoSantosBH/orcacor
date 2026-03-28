@@ -24,7 +24,7 @@ class CalculateRoomAreaUseCase {
         //teto = L x C
         val ceilingArea = width * length
 
-        //base Paredes + teto
+        //base = Paredes + teto
         val grossArea = wallsArea + ceilingArea
 
         //janelas portaas etc
@@ -40,16 +40,31 @@ class CalculateRoomAreaUseCase {
         )
     }
 
+
+
+
+
+    //base= paredes - janelas - portas
     private fun calculateAsymmetric(room: Room): Room {
         val height = room.height ?: 0f
         val walls = room.irregularWalls
 
+        //somatória = P1 + P2 + … PN
         val sum = walls.sum()
+
+        //paredes = somatória * Altura
         val wallsArea = sum * height
+
+        //media = somatoria / n
         val avg = if (walls.isNotEmpty()) sum / 4f else 0f
+
+        //teto = media^2
         val ceilingArea = avg * avg
+
         val discounts = totalDiscounts(room)
         // Ordem correta: (paredes - descontos) + teto
+
+        //m2 = base + teto
         val totalSquareMeters = (wallsArea - discounts) + ceilingArea
 
         return room.copy(
@@ -63,9 +78,12 @@ class CalculateRoomAreaUseCase {
         val width = room.width ?: 0f
         val height = room.height ?: 0f
 
+        //base = (L* A)
         val wallsArea = width * height
         val discounts = room.windows.sumOf { it.area.toDouble() }.toFloat() +
                 room.doors.sumOf { it.area.toDouble() }.toFloat()
+
+        //m2 = base - Janela - porta
         val totalSquareMeters = wallsArea - discounts
 
         return room.copy(
