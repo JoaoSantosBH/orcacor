@@ -17,8 +17,10 @@ class AddRoomToBudgetUseCase(
         val budget = budgetRepository.getById(room.budgetId)
         if (budget != null) {
             val allRooms = mutableListOf<Room>()
+            allRooms.addAll(budget.rooms)
+            allRooms.add(saved)
             // We recalculate total from scratch on the budget level in the ViewModel
-            budgetRepository.save(budget.copy(totalArea = budget.totalArea + saved.totalSquareMeters))
+            budgetRepository.save(budget.copy(rooms =  allRooms, totalArea = budget.totalArea + saved.totalSquareMeters))
         }
         saved
     }

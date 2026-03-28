@@ -18,10 +18,19 @@ class CalculateRoomAreaUseCase {
         val length = room.length ?: 0f
         val height = room.height ?: 0f
 
+        //paredes = ((Lx2) * A) + ((Cx2) *A)
         val wallsArea = ((width * 2) * height) + ((length * 2) * height)
+
+        //teto = L x C
         val ceilingArea = width * length
+
+        //base Paredes + teto
         val grossArea = wallsArea + ceilingArea
+
+        //janelas portaas etc
         val discounts = totalDiscounts(room)
+
+        //m2 = base - Janela - porta
         val totalSquareMeters = grossArea - discounts
 
         return room.copy(
