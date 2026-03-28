@@ -47,6 +47,14 @@ kotlin {
         // pois o template não faz isso mais automaticamente.
         getByName("iosArm64Main").dependsOn(iosMain.get())
         getByName("iosSimulatorArm64Main").dependsOn(iosMain.get())
+
+        // ─── webMain: source set compartilhado entre JS e WasmJS ─────────────
+        // Contém implementações in-memory dos repositórios (sem Room/SQLite).
+        val webMain by creating {
+            dependsOn(commonMain.get())
+        }
+        jsMain.get().dependsOn(webMain)
+        wasmJsMain.get().dependsOn(webMain)
         // ─────────────────────────────────────────────────────────────────────
 
         commonMain.dependencies {

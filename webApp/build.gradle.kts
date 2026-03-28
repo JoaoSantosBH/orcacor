@@ -18,6 +18,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(project(":sharedUI"))
+            implementation(libs.koin.core)
         }
     }
 }
