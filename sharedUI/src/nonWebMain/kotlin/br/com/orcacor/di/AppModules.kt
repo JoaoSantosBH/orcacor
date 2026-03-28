@@ -22,8 +22,8 @@ import br.com.orcacor.domain.usecase.report.GenerateReportUseCase
 import br.com.orcacor.domain.usecase.room.AddRoomToBudgetUseCase
 import br.com.orcacor.domain.usecase.room.CalculateRoomAreaUseCase
 import br.com.orcacor.domain.usecase.room.DeleteRoomUseCase
-import br.com.orcacor.presentation.budget.BudgetViewModel
 import br.com.orcacor.presentation.auth.AuthViewModel
+import br.com.orcacor.presentation.budget.BudgetViewModel
 import br.com.orcacor.presentation.historic.HistoricViewModel
 import br.com.orcacor.presentation.profile.ProfileViewModel
 import br.com.orcacor.presentation.report.ReportViewModel

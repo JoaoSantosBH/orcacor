@@ -29,6 +29,26 @@ kotlin {
     iosSimulatorArm64()
 
     sourceSets {
+        // ─── nonWebMain: source set intermediário para código Room ───────────
+        // Android, JVM e iOS herdam daqui. JS e WASM NÃO herdam.
+        // Room não tem artefato JS/WASM — todo código Room fica aqui.
+        val nonWebMain by creating {
+            dependsOn(commonMain.get())
+            dependencies {
+                implementation(libs.room.runtime)
+            }
+        }
+        androidMain.get().dependsOn(nonWebMain)
+        jvmMain.get().dependsOn(nonWebMain)
+        iosMain.get().dependsOn(nonWebMain)
+
+        // O template padrão de hierarquia foi desabilitado (gradle.properties).
+        // Reconectamos manualmente os leaf source sets do iOS a iosMain,
+        // pois o template não faz isso mais automaticamente.
+        getByName("iosArm64Main").dependsOn(iosMain.get())
+        getByName("iosSimulatorArm64Main").dependsOn(iosMain.get())
+        // ─────────────────────────────────────────────────────────────────────
+
         commonMain.dependencies {
             api(libs.compose.runtime)
             api(libs.compose.ui)
@@ -69,7 +89,6 @@ kotlin {
             implementation(libs.kotlinx.coroutines.android)
             implementation(libs.ktor.client.okhttp)
             implementation(libs.kstore.file)
-            implementation(libs.room.runtime) // Room: Android
         }
 
         jvmMain.dependencies {
@@ -78,19 +97,20 @@ kotlin {
             implementation(libs.ktor.client.okhttp)
             implementation(libs.kstore.file)
             implementation(libs.sqlite.bundled)
-            implementation(libs.room.runtime) // Room: Desktop
-        }
-
-        webMain.dependencies {
-            implementation(libs.kstore.storage)
-            // Room não suporta JS/WASM — banco de dados web usa API REST
         }
 
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
             implementation(libs.kstore.file)
             implementation(libs.sqlite.bundled)
-            implementation(libs.room.runtime) // Room: iOS
+        }
+
+        jsMain.dependencies {
+            implementation(libs.kstore.storage)
+        }
+
+        wasmJsMain.dependencies {
+            implementation(libs.kstore.storage)
         }
 
     }
