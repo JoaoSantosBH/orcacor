@@ -53,7 +53,6 @@ kotlin {
             implementation(libs.coil)
             implementation(libs.coil.network.ktor)
             implementation(libs.multiplatformSettings)
-            implementation(libs.room.runtime)
             implementation(libs.apollo.runtime)
             implementation(libs.kstore)
             implementation(libs.materialKolor)
@@ -70,6 +69,7 @@ kotlin {
             implementation(libs.kotlinx.coroutines.android)
             implementation(libs.ktor.client.okhttp)
             implementation(libs.kstore.file)
+            implementation(libs.room.runtime) // Room: Android
         }
 
         jvmMain.dependencies {
@@ -78,16 +78,19 @@ kotlin {
             implementation(libs.ktor.client.okhttp)
             implementation(libs.kstore.file)
             implementation(libs.sqlite.bundled)
+            implementation(libs.room.runtime) // Room: Desktop
         }
 
         webMain.dependencies {
             implementation(libs.kstore.storage)
+            // Room não suporta JS/WASM — banco de dados web usa API REST
         }
 
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
             implementation(libs.kstore.file)
             implementation(libs.sqlite.bundled)
+            implementation(libs.room.runtime) // Room: iOS
         }
 
     }
