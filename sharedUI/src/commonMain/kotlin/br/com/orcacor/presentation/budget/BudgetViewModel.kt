@@ -3,16 +3,20 @@ package br.com.orcacor.presentation.budget
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.com.orcacor.domain.entity.Budget
+import br.com.orcacor.domain.entity.BudgetStatus
 import br.com.orcacor.domain.entity.Room
 import br.com.orcacor.domain.repository.RoomRepository
 import br.com.orcacor.domain.usecase.budget.CreateBudgetUseCase
+import br.com.orcacor.domain.usecase.budget.GetBudgetHistoryUseCase
 import br.com.orcacor.domain.usecase.budget.SaveBudgetUseCase
 import br.com.orcacor.domain.usecase.room.DeleteRoomUseCase
 import br.com.orcacor.util.safeLaunch
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -43,6 +47,7 @@ class BudgetViewModel(
     private val createBudgetUseCase: CreateBudgetUseCase,
     private val saveBudgetUseCase: SaveBudgetUseCase,
     private val deleteRoomUseCase: DeleteRoomUseCase,
+    private val getBudgetHistoryUseCase: GetBudgetHistoryUseCase,
     private val roomRepository: RoomRepository
 ) : ViewModel() {
 
@@ -52,6 +57,12 @@ class BudgetViewModel(
     private val _effects = Channel<BudgetEffect>(Channel.BUFFERED)
     val effects = _effects.receiveAsFlow()
 
+    private var observeRoomsJob: Job? = null
+
+    init {
+        loadExistingDraft()
+    }
+
     fun onIntent(intent: BudgetIntent) {
         when (intent) {
             BudgetIntent.CreateNew -> createNew()
@@ -59,6 +70,21 @@ class BudgetViewModel(
             is BudgetIntent.DeleteRoom -> deleteRoom(intent.roomId)
             BudgetIntent.GenerateReport -> generateReport()
             BudgetIntent.ClearError -> _state.value = _state.value.copy(error = null)
+        }
+    }
+
+    private fun loadExistingDraft() {
+        safeLaunch {
+            val allBudgets = getBudgetHistoryUseCase.invoke().first()
+            val draft = allBudgets.firstOrNull { it.status == BudgetStatus.DRAFT }
+            if (draft != null && _state.value.budget == null) {
+                _state.value = _state.value.copy(
+                    budget = draft,
+                    recipientName = draft.recipientName,
+                    recipientEmail = draft.recipientEmail
+                )
+                observeRooms(draft.id)
+            }
         }
     }
 
@@ -99,13 +125,13 @@ class BudgetViewModel(
     }
 
     private fun observeRooms(budgetId: String) {
-        roomRepository.getByBudgetId(budgetId)
+        observeRoomsJob?.cancel()
+        observeRoomsJob = roomRepository.getByBudgetId(budgetId)
             .onEach { rooms ->
                 val totalArea = rooms.sumOf { it.totalSquareMeters.toDouble() }.toFloat()
-                _state.value = _state.value.copy(rooms = rooms)
-                _state.value.budget?.let { budget ->
-                    saveBudgetUseCase.invoke(budget.copy(totalArea = totalArea))
-                }
+                val updatedBudget = _state.value.budget?.copy(totalArea = totalArea)
+                _state.value = _state.value.copy(rooms = rooms, budget = updatedBudget)
+                updatedBudget?.let { saveBudgetUseCase.invoke(it) }
             }
             .launchIn(viewModelScope)
     }
