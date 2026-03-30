@@ -34,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import br.com.orcacor.domain.entity.Room
@@ -59,7 +60,14 @@ fun BudgetScreen(
     }
 
     Scaffold(
-        topBar = { LargeTopAppBar(title = { Text("Novo Orçamento") }) },
+        topBar = { LargeTopAppBar(title = {
+            if (state.budget != null)
+                Text(state.budget!!.number)
+
+            else
+            Text("Novo Orçamento")
+
+        }) },
         floatingActionButton = {
             if (state.budget != null) {
                 FloatingActionButton(onClick = {
@@ -193,4 +201,13 @@ private fun RoomItem(room: Room, onDelete: () -> Unit) {
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun PreviewItem() {
+    RoomItem(
+        room = Room.EMPTY,
+        onDelete = {}
+    )
 }
