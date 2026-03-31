@@ -34,32 +34,73 @@ class MaterialConstantsRepositoryImpl : MaterialConstantsRepository {
         )
 
         val windowKinds = listOf(
-            WindowKind(1, "Janela Simples (0,60 x 1,20m)", 0.72f),
-            WindowKind(2, "Janela Média (1,20 x 1,20m)", 1.44f),
-            WindowKind(3, "Janela Grande (1,80 x 1,20m)", 2.16f),
-            WindowKind(4, "Janela Box (0,60 x 0,60m)", 0.36f),
-            WindowKind(5, "Janela Panorâmica (2,40 x 1,50m)", 3.60f)
+            WindowKind(1, "40 cm x 40 cm", 0.16f),
+            WindowKind(2, "40 cm x 50 cm", 0.2f),
+            WindowKind(3, "50 cm x 50 cm", 0.25f),
+            WindowKind(4, "60 cm x 40 cm", 0.24f),
+            WindowKind(5, "60 cm x 50 cm", 0.3f),
+            WindowKind(6, "60 cm x 60 cm", 0.36f),
+            WindowKind(7, "60 cm x 80 cm", 0.48f),
+            WindowKind(8, "100 cm x 120 cm", 1.2f),
+            WindowKind(9, "100 cm x 140 cm", 1.4f),
+            WindowKind(10, "100 cm x 150 cm", 1.5f),
+            WindowKind(11, "100 cm x 200 cm", 2.0f),
+            WindowKind(12, "120 cm x 150 cm", 1.8f),
+            WindowKind(13, "120 cm x 200 cm", 2.4f),
+            WindowKind(14, "200 cm x 150 cm", 3.0f),
+            WindowKind(15, "200 cm x 200 cm", 4.0f),
+            WindowKind(16, "250 cm x 150 cm", 3.75f),
+            WindowKind(17, "250 cm x 200 cm", 5.0f),
+            WindowKind(18, "250 cm x 250 cm", 6.25f),
+            WindowKind(19, "300 cm x 100 cm", 3.0f),
+            WindowKind(20, "300 cm x 200 cm", 6.0f),
+            WindowKind(21, "300 cm x 250 cm", 7.5f),
+            WindowKind(22, "300 cm x 300 cm", 9.0f),
+            WindowKind(23, "300 cm x 350 cm", 10.5f),
+            WindowKind(24, "350 cm x 350 cm", 12.25f),
+            WindowKind(25, "400 cm x 400 cm", 16.0f)
         )
 
         val doorKinds = listOf(
-            DoorKind(1, "Porta Simples (0,80 x 2,10m)", 1.68f),
-            DoorKind(2, "Porta Larga (0,90 x 2,10m)", 1.89f),
-            DoorKind(3, "Porta Dupla (1,60 x 2,10m)", 3.36f),
-            DoorKind(4, "Porta de Correr (2,00 x 2,10m)", 4.20f)
+            DoorKind(1, "50 cm x 210 cm", 1.05f),
+            DoorKind(2, "60 cm x 210 cm", 1.26f),
+            DoorKind(3, "70 cm x 210 cm", 1.47f),
+            DoorKind(4, "80 cm x 210 cm", 1.68f),
+            DoorKind(5, "90 cm x 210 cm", 1.89f),
+            DoorKind(6, "100 cm x 210 cm", 2.1f),
+            DoorKind(7, "110 cm x 210 cm", 2.31f),
+            DoorKind(8, "120 cm x 210 cm", 2.52f),
+            DoorKind(9, "130 cm x 210 cm", 2.73f),
+            DoorKind(10, "140 cm x 210 cm", 2.94f),
+            DoorKind(11, "150 cm x 210 cm", 3.15f),
+            DoorKind(12, "160 cm x 210 cm", 3.36f),
+            DoorKind(13, "170 cm x 210 cm", 3.57f),
+            DoorKind(14, "180 cm x 210 cm", 3.78f),
+            DoorKind(15, "190 cm x 210 cm", 3.99f),
+            DoorKind(16, "200 cm x 210 cm", 4.2f),
+            DoorKind(17, "250 cm x 210 cm", 5.25f),
+            DoorKind(18, "300 cm x 210 cm", 6.3f),
+            DoorKind(19, "350 cm x 210 cm", 7.35f),
+            DoorKind(20, "400 cm x 210 cm", 8.4f)
         )
 
         val mirrorKinds = listOf(
-            MirrorKind(1, "Espelho Pequeno (0,50 x 0,70m)", 0.35f),
-            MirrorKind(2, "Espelho Médio (0,80 x 1,00m)", 0.80f),
-            MirrorKind(3, "Espelho Grande (1,20 x 1,50m)", 1.80f),
-            MirrorKind(4, "Espelho de Corpo Inteiro (0,60 x 1,80m)", 1.08f)
+            MirrorKind(1, "40 cm x 40 cm", 0.16f),
+            MirrorKind(2, "50 cm x 50 cm", 0.25f),
+            MirrorKind(3, "80 cm x 80 cm", 0.64f),
+            MirrorKind(4, "90 cm x 70 cm", 0.63f),
+            MirrorKind(5, "100 cm x 100 cm", 1.0f),
+            MirrorKind(6, "150 cm x 100 cm", 1.5f),
+            MirrorKind(7, "150 cm x 150 cm", 2.25f)
         )
 
         val closetKinds = listOf(
-            ClosetKind(1, "Armário Embutido Pequeno (1,00 x 2,10m)", 2.10f),
-            ClosetKind(2, "Armário Embutido Médio (1,50 x 2,10m)", 3.15f),
-            ClosetKind(3, "Armário Embutido Grande (2,00 x 2,10m)", 4.20f),
-            ClosetKind(4, "Armário de Cozinha (3,00 x 0,90m)", 2.70f)
+            ClosetKind(1, "150 cm x 70 cm", 1.05f),
+            ClosetKind(2, "220 cm x 150 cm", 3.3f),
+            ClosetKind(3, "238 cm x 175 cm", 4.165f),
+            ClosetKind(4, "240 cm x 275 cm", 6.6f),
+            ClosetKind(5, "240 cm x 40 cm", 0.96f),
+            ClosetKind(6, "275 cm x 275 cm", 7.56f)
         )
     }
 }
