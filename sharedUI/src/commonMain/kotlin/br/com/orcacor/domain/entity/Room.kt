@@ -21,6 +21,10 @@ data class Room(
     val wallsArea: Float = 0f,
     val totalSquareMeters: Float = 0f,
     val coats: Int = 2
-)
+){
+    companion object {
+        val EMPTY = Room(budgetId = "123", name = "Sala de Estar", kind = RoomKind.SYMMETRIC)
+    }
+}
 
 enum class RoomKind { SYMMETRIC, ASYMMETRIC, EXTERNAL }

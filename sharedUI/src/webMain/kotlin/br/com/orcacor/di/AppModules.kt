@@ -1,10 +1,9 @@
 package br.com.orcacor.di
 
-import br.com.orcacor.data.local.createDatabase
-import br.com.orcacor.data.repository.BudgetRepositoryImpl
-import br.com.orcacor.data.repository.MaterialConstantsRepositoryImpl
-import br.com.orcacor.data.repository.RoomRepositoryImpl
-import br.com.orcacor.data.repository.UserRepositoryImpl
+import br.com.orcacor.data.repository.BudgetRepositoryInMemory
+import br.com.orcacor.data.repository.MaterialConstantsRepositoryInMemory
+import br.com.orcacor.data.repository.RoomRepositoryInMemory
+import br.com.orcacor.data.repository.UserRepositoryInMemory
 import br.com.orcacor.domain.repository.BudgetRepository
 import br.com.orcacor.domain.repository.MaterialConstantsRepository
 import br.com.orcacor.domain.repository.RoomRepository
@@ -22,8 +21,9 @@ import br.com.orcacor.domain.usecase.report.GenerateReportUseCase
 import br.com.orcacor.domain.usecase.room.AddRoomToBudgetUseCase
 import br.com.orcacor.domain.usecase.room.CalculateRoomAreaUseCase
 import br.com.orcacor.domain.usecase.room.DeleteRoomUseCase
-import br.com.orcacor.presentation.budget.BudgetViewModel
 import br.com.orcacor.presentation.auth.AuthViewModel
+import br.com.orcacor.presentation.budget.BudgetViewModel
+import br.com.orcacor.presentation.budget.CreateBudgetViewModel
 import br.com.orcacor.presentation.historic.HistoricViewModel
 import br.com.orcacor.presentation.profile.ProfileViewModel
 import br.com.orcacor.presentation.report.ReportViewModel
@@ -34,17 +34,12 @@ import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
+// Web (JS/WasmJS): repositórios in-memory — sem Room/SQLite no browser
 val dataModule = module {
-    single { createDatabase() }
-    single { get<br.com.orcacor.data.local.AppDatabase>().budgetDao() }
-    single { get<br.com.orcacor.data.local.AppDatabase>().roomDao() }
-    single { get<br.com.orcacor.data.local.AppDatabase>().accessoryDao() }
-    single { get<br.com.orcacor.data.local.AppDatabase>().userDao() }
-
-    singleOf(::BudgetRepositoryImpl) bind BudgetRepository::class
-    singleOf(::RoomRepositoryImpl) bind RoomRepository::class
-    singleOf(::UserRepositoryImpl) bind UserRepository::class
-    singleOf(::MaterialConstantsRepositoryImpl) bind MaterialConstantsRepository::class
+    singleOf(::UserRepositoryInMemory) bind UserRepository::class
+    singleOf(::BudgetRepositoryInMemory) bind BudgetRepository::class
+    singleOf(::RoomRepositoryInMemory) bind RoomRepository::class
+    singleOf(::MaterialConstantsRepositoryInMemory) bind MaterialConstantsRepository::class
 }
 
 val domainModule = module {
@@ -66,6 +61,7 @@ val domainModule = module {
 val presentationModule = module {
     viewModelOf(::AuthViewModel)
     viewModelOf(::BudgetViewModel)
+    viewModelOf(::CreateBudgetViewModel)
     viewModelOf(::RoomFormViewModel)
     viewModelOf(::ReportViewModel)
     viewModelOf(::HistoricViewModel)

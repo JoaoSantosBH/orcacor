@@ -8,6 +8,7 @@ import kotlinx.serialization.Serializable
 @Serializable object LoginDestination : NavKey
 @Serializable object RegisterDestination : NavKey
 @Serializable object HomeDestination : NavKey
+@Serializable data class BudgetDestination(val budgetId: String) : NavKey
 @Serializable data class RoomFormDestination(val budgetId: String) : NavKey
 @Serializable data class ReportDestination(val budgetId: String) : NavKey
 

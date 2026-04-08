@@ -86,7 +86,13 @@ class RoomFormViewModel(
 
     fun onIntent(intent: RoomFormIntent) {
         when (intent) {
-            is RoomFormIntent.SetBudgetId -> _state.value = _state.value.copy(budgetId = intent.budgetId)
+            is RoomFormIntent.SetBudgetId -> _state.value = RoomFormState(
+                    budgetId = intent.budgetId,
+                    windowKinds = _state.value.windowKinds,
+                    doorKinds = _state.value.doorKinds,
+                    mirrorKinds = _state.value.mirrorKinds,
+                    closetKinds = _state.value.closetKinds
+                )
             is RoomFormIntent.UpdateName -> update { copy(name = intent.name) }
             is RoomFormIntent.UpdateKind -> update { copy(kind = intent.kind) }
             is RoomFormIntent.UpdateNote -> update { copy(note = intent.note) }
@@ -133,8 +139,7 @@ class RoomFormViewModel(
     }
 
     private fun recalculatePreview() {
-        val s = _state.value
-        val room = s.toRoom()
+        val room = _state.value.toRoom()
         val calculated = calculateRoomAreaUseCase.invoke(room)
         _state.value = _state.value.copy(
             previewTotalArea = calculated.totalSquareMeters,
@@ -144,16 +149,30 @@ class RoomFormViewModel(
     }
 
     private fun saveRoom() {
-        val s = _state.value
-        if (s.name.isBlank()) {
-            _state.value = s.copy(error = "Nome do cômodo obrigatório")
+        if (_state.value.name.isBlank()) {
+            _state.value = _state.value.copy(error = "Nome do cômodo obrigatório")
             return
         }
+        if(_state.value.length.isBlank() && _state.value.kind == RoomKind.SYMMETRIC) {
+             _state.value = _state.value.copy(error = "Comprimento obrigatório")
+            return
+        }
+        if(_state.value.width.isBlank() && _state.value.kind == RoomKind.SYMMETRIC) {
+            _state.value = _state.value.copy(error = "Largura obrigatório")
+            return
+        }
+        if (_state.value.height.isBlank()) {
+            _state.value = _state.value.copy(error = "Altura obrigatório")
+            return
+        }
+
+
         safeLaunch {
             _state.value = _state.value.copy(isLoading = true)
-            addRoomToBudgetUseCase.invoke(s.toRoom())
-                .onSuccess {
-                    _state.value = _state.value.copy(isLoading = false)
+            addRoomToBudgetUseCase.invoke(_state.value.toRoom())
+                .onSuccess { it ->
+                    it
+                    _state.value = _state.value.copy(isLoading = false, error = null)
                     _effects.send(RoomFormEffect.NavigateBack)
                 }
                 .onFailure { error ->

@@ -9,6 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import br.com.orcacor.navigation.BudgetDestination
 import br.com.orcacor.navigation.HomeDestination
 import br.com.orcacor.navigation.LoginDestination
 import br.com.orcacor.navigation.OnboardingDestination
@@ -18,6 +19,7 @@ import br.com.orcacor.navigation.RoomFormDestination
 import br.com.orcacor.navigation.SplashDestination
 import br.com.orcacor.presentation.auth.LoginScreen
 import br.com.orcacor.presentation.auth.RegisterScreen
+import br.com.orcacor.presentation.budget.BudgetScreen
 import br.com.orcacor.presentation.home.HomeScreen
 import br.com.orcacor.presentation.onboarding.OnboardingScreen
 import br.com.orcacor.presentation.report.ReportScreen
@@ -62,9 +64,15 @@ fun App(
                 onNavigateToHome = { navigateAndClear(HomeDestination) }
             )
             is HomeDestination -> HomeScreen(
-                onNavigateToRoomForm = { budgetId -> navigate(RoomFormDestination(budgetId)) },
+                onNavigateToBudget = { budgetId -> navigate(BudgetDestination(budgetId)) },
                 onNavigateToReport = { budgetId -> navigate(ReportDestination(budgetId)) },
                 onNavigateToLogin = { navigateAndClear(LoginDestination) }
+            )
+            is BudgetDestination -> BudgetScreen(
+                budgetId = destination.budgetId,
+                onNavigateToRoomForm = { budgetId -> navigate(RoomFormDestination(budgetId)) },
+                onNavigateToReport = { budgetId -> navigate(ReportDestination(budgetId)) },
+                onNavigateBack = ::navigateBack
             )
             is RoomFormDestination -> RoomFormScreen(
                 budgetId = destination.budgetId,
