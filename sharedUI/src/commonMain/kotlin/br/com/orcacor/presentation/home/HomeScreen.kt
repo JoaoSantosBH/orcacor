@@ -20,7 +20,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import br.com.orcacor.presentation.budget.BudgetScreen
+import br.com.orcacor.presentation.budget.CreateBudgetScreen
 import br.com.orcacor.presentation.historic.HistoricScreen
 import br.com.orcacor.presentation.instructions.InstructionsScreen
 import br.com.orcacor.presentation.profile.ProfileScreen
@@ -34,7 +34,7 @@ private enum class HomeTab(val label: String) {
 
 @Composable
 fun HomeScreen(
-    onNavigateToRoomForm: (budgetId: String) -> Unit,
+    onNavigateToBudget: (budgetId: String) -> Unit,
     onNavigateToReport: (budgetId: String) -> Unit,
     onNavigateToLogin: () -> Unit
 ) {
@@ -77,9 +77,8 @@ fun HomeScreen(
         ) {
             AnimatedContent(targetState = currentTab) { tab ->
                 when (tab) {
-                    HomeTab.BUDGET -> BudgetScreen(
-                        onNavigateToRoomForm = onNavigateToRoomForm,
-                        onNavigateToReport = onNavigateToReport
+                    HomeTab.BUDGET -> CreateBudgetScreen(
+                        onNavigateToBudget = onNavigateToBudget
                     )
                     HomeTab.HISTORIC -> HistoricScreen(
                         onNavigateToReport = onNavigateToReport

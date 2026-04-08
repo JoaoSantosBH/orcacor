@@ -23,7 +23,7 @@ data class Room(
     val coats: Int = 2
 ){
     companion object {
-        val EMPTY = Room(budgetId = "", name = "", kind = RoomKind.SYMMETRIC)
+        val EMPTY = Room(budgetId = "123", name = "Sala de Estar", kind = RoomKind.SYMMETRIC)
     }
 }
 

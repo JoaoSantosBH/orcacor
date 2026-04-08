@@ -3,10 +3,8 @@ package br.com.orcacor.presentation.budget
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.com.orcacor.domain.entity.Budget
-import br.com.orcacor.domain.entity.BudgetStatus
 import br.com.orcacor.domain.entity.Room
 import br.com.orcacor.domain.repository.RoomRepository
-import br.com.orcacor.domain.usecase.budget.CreateBudgetUseCase
 import br.com.orcacor.domain.usecase.budget.GetBudgetHistoryUseCase
 import br.com.orcacor.domain.usecase.budget.SaveBudgetUseCase
 import br.com.orcacor.domain.usecase.room.DeleteRoomUseCase
@@ -31,7 +29,6 @@ data class BudgetState(
 )
 
 sealed interface BudgetIntent {
-    object CreateNew : BudgetIntent
     data class UpdateRecipient(val name: String, val email: String) : BudgetIntent
     data class DeleteRoom(val roomId: Long) : BudgetIntent
     object GenerateReport : BudgetIntent
@@ -44,7 +41,6 @@ sealed interface BudgetEffect {
 }
 
 class BudgetViewModel(
-    private val createBudgetUseCase: CreateBudgetUseCase,
     private val saveBudgetUseCase: SaveBudgetUseCase,
     private val deleteRoomUseCase: DeleteRoomUseCase,
     private val getBudgetHistoryUseCase: GetBudgetHistoryUseCase,
@@ -59,13 +55,8 @@ class BudgetViewModel(
 
     private var observeRoomsJob: Job? = null
 
-    init {
-        loadExistingDraft()
-    }
-
     fun onIntent(intent: BudgetIntent) {
         when (intent) {
-            BudgetIntent.CreateNew -> createNew()
             is BudgetIntent.UpdateRecipient -> updateRecipient(intent.name, intent.email)
             is BudgetIntent.DeleteRoom -> deleteRoom(intent.roomId)
             BudgetIntent.GenerateReport -> generateReport()
@@ -73,33 +64,22 @@ class BudgetViewModel(
         }
     }
 
-    private fun loadExistingDraft() {
-        safeLaunch {
-            val allBudgets = getBudgetHistoryUseCase.invoke().first()
-            val draft = allBudgets.firstOrNull { it.status == BudgetStatus.DRAFT }
-            if (draft != null && _state.value.budget == null) {
-                _state.value = _state.value.copy(
-                    budget = draft,
-                    recipientName = draft.recipientName,
-                    recipientEmail = draft.recipientEmail
-                )
-                observeRooms(draft.id)
-            }
-        }
-    }
-
-    private fun createNew() {
+    fun loadBudget(budgetId: String) {
         safeLaunch {
             _state.value = _state.value.copy(isLoading = true)
-            createBudgetUseCase.invoke("", "")
-                .onSuccess { budget ->
-                    _state.value = _state.value.copy(isLoading = false, budget = budget)
-                    observeRooms(budget.id)
-                    _effects.send(BudgetEffect.NavigateToRoomForm(budget.id))
-                }
-                .onFailure { error ->
-                    _state.value = _state.value.copy(isLoading = false, error = error.message)
-                }
+            val allBudgets = getBudgetHistoryUseCase.invoke().first()
+            val budget = allBudgets.firstOrNull { it.id == budgetId }
+            if (budget != null) {
+                _state.value = _state.value.copy(
+                    isLoading = false,
+                    budget = budget,
+                    recipientName = budget.recipientName,
+                    recipientEmail = budget.recipientEmail
+                )
+                observeRooms(budgetId)
+            } else {
+                _state.value = _state.value.copy(isLoading = false, error = "Orçamento não encontrado.")
+            }
         }
     }
 
@@ -134,9 +114,5 @@ class BudgetViewModel(
                 updatedBudget?.let { saveBudgetUseCase.invoke(it) }
             }
             .launchIn(viewModelScope)
-    }
-
-    fun loadBudget(budgetId: String) {
-        observeRooms(budgetId)
     }
 }
