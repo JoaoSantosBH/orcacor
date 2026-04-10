@@ -12,4 +12,7 @@ actual fun randomUuid(): String {
     }
 }
 
-actual fun currentTimeMillis(): Long = js("Date.now()").unsafeCast<Double>().toLong()
+@JsFun("() => Date.now()")
+private external fun jsDateNow(): Double
+
+actual fun currentTimeMillis(): Long = jsDateNow().toLong()

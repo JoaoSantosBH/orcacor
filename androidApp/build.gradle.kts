@@ -19,6 +19,15 @@ android {
         versionName = "1.0.0"
     }
 
+    buildTypes {
+        debug {
+            isDebuggable = true
+        }
+        release {
+            isDebuggable = false
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17

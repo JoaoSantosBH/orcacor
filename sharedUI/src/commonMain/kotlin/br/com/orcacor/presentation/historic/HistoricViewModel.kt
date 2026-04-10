@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
 
 data class HistoricState(
     val budgets: List<Budget> = emptyList(),
@@ -43,7 +44,7 @@ class HistoricViewModel(
     init {
         getBudgetHistoryUseCase.invoke()
             .onEach { budgets ->
-                _state.value = _state.value.copy(budgets = budgets, isLoading = false)
+                _state.update { it.copy(budgets = budgets, isLoading = false) }
             }
             .launchIn(viewModelScope)
     }

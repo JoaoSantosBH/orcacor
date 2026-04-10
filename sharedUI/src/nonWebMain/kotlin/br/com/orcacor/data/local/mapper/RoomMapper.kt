@@ -6,7 +6,6 @@ import br.com.orcacor.domain.entity.Accessory
 import br.com.orcacor.domain.entity.AccessoryType
 import br.com.orcacor.domain.entity.Room
 import br.com.orcacor.domain.entity.RoomKind
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 fun RoomEntity.toDomain(accessories: List<AccessoryEntity>): Room {

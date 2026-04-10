@@ -5,14 +5,16 @@ import androidx.lifecycle.viewModelScope
 import br.com.orcacor.domain.entity.Budget
 import br.com.orcacor.domain.entity.Room
 import br.com.orcacor.domain.repository.RoomRepository
-import br.com.orcacor.domain.usecase.budget.CreateBudgetUseCase
+import br.com.orcacor.domain.usecase.budget.GetBudgetHistoryUseCase
 import br.com.orcacor.domain.usecase.budget.SaveBudgetUseCase
 import br.com.orcacor.domain.usecase.room.DeleteRoomUseCase
 import br.com.orcacor.util.safeLaunch
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -27,7 +29,6 @@ data class BudgetState(
 )
 
 sealed interface BudgetIntent {
-    object CreateNew : BudgetIntent
     data class UpdateRecipient(val name: String, val email: String) : BudgetIntent
     data class DeleteRoom(val roomId: Long) : BudgetIntent
     object GenerateReport : BudgetIntent
@@ -40,9 +41,9 @@ sealed interface BudgetEffect {
 }
 
 class BudgetViewModel(
-    private val createBudgetUseCase: CreateBudgetUseCase,
     private val saveBudgetUseCase: SaveBudgetUseCase,
     private val deleteRoomUseCase: DeleteRoomUseCase,
+    private val getBudgetHistoryUseCase: GetBudgetHistoryUseCase,
     private val roomRepository: RoomRepository
 ) : ViewModel() {
 
@@ -52,9 +53,10 @@ class BudgetViewModel(
     private val _effects = Channel<BudgetEffect>(Channel.BUFFERED)
     val effects = _effects.receiveAsFlow()
 
+    private var observeRoomsJob: Job? = null
+
     fun onIntent(intent: BudgetIntent) {
         when (intent) {
-            BudgetIntent.CreateNew -> createNew()
             is BudgetIntent.UpdateRecipient -> updateRecipient(intent.name, intent.email)
             is BudgetIntent.DeleteRoom -> deleteRoom(intent.roomId)
             BudgetIntent.GenerateReport -> generateReport()
@@ -62,18 +64,22 @@ class BudgetViewModel(
         }
     }
 
-    private fun createNew() {
+    fun loadBudget(budgetId: String) {
         safeLaunch {
             _state.value = _state.value.copy(isLoading = true)
-            createBudgetUseCase.invoke("", "")
-                .onSuccess { budget ->
-                    _state.value = _state.value.copy(isLoading = false, budget = budget)
-                    observeRooms(budget.id)
-                    _effects.send(BudgetEffect.NavigateToRoomForm(budget.id))
-                }
-                .onFailure { error ->
-                    _state.value = _state.value.copy(isLoading = false, error = error.message)
-                }
+            val allBudgets = getBudgetHistoryUseCase.invoke().first()
+            val budget = allBudgets.firstOrNull { it.id == budgetId }
+            if (budget != null) {
+                _state.value = _state.value.copy(
+                    isLoading = false,
+                    budget = budget,
+                    recipientName = budget.recipientName,
+                    recipientEmail = budget.recipientEmail
+                )
+                observeRooms(budgetId)
+            } else {
+                _state.value = _state.value.copy(isLoading = false, error = "Orçamento não encontrado.")
+            }
         }
     }
 
@@ -99,18 +105,14 @@ class BudgetViewModel(
     }
 
     private fun observeRooms(budgetId: String) {
-        roomRepository.getByBudgetId(budgetId)
+        observeRoomsJob?.cancel()
+        observeRoomsJob = roomRepository.getByBudgetId(budgetId)
             .onEach { rooms ->
                 val totalArea = rooms.sumOf { it.totalSquareMeters.toDouble() }.toFloat()
-                _state.value = _state.value.copy(rooms = rooms)
-                _state.value.budget?.let { budget ->
-                    saveBudgetUseCase.invoke(budget.copy(totalArea = totalArea))
-                }
+                val updatedBudget = _state.value.budget?.copy(totalArea = totalArea)
+                _state.value = _state.value.copy(rooms = rooms, budget = updatedBudget)
+                updatedBudget?.let { saveBudgetUseCase.invoke(it) }
             }
             .launchIn(viewModelScope)
-    }
-
-    fun loadBudget(budgetId: String) {
-        observeRooms(budgetId)
     }
 }

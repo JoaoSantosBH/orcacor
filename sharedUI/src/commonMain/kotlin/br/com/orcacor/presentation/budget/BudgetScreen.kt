@@ -1,7 +1,6 @@
 package br.com.orcacor.presentation.budget
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,9 +14,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -26,10 +27,13 @@ import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
@@ -43,11 +47,18 @@ import org.koin.compose.viewmodel.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BudgetScreen(
+    budgetId: String,
     onNavigateToRoomForm: (budgetId: String) -> Unit,
     onNavigateToReport: (budgetId: String) -> Unit,
+    onNavigateBack: () -> Unit,
     viewModel: BudgetViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(budgetId) {
+        viewModel.loadBudget(budgetId)
+    }
 
     LaunchedEffect(Unit) {
         viewModel.effects.collect { effect ->
@@ -58,38 +69,48 @@ fun BudgetScreen(
         }
     }
 
-    Scaffold(
-        topBar = { LargeTopAppBar(title = { Text("Novo Orçamento") }) },
-        floatingActionButton = {
-            if (state.budget != null) {
-                FloatingActionButton(onClick = {
-                    viewModel.onIntent(BudgetIntent.GenerateReport)
-                }) {
-                    Icon(Icons.Default.Add, contentDescription = "Adicionar cômodo")
-                }
-            }
+    LaunchedEffect(state.error) {
+        state.error?.let {
+            snackbarHostState.showSnackbar(it)
+            viewModel.onIntent(BudgetIntent.ClearError)
         }
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(horizontal = 16.dp)
-        ) {
-            if (state.budget == null) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(
-                            "Inicie um novo orçamento",
-                            style = MaterialTheme.typography.headlineSmall
-                        )
-                        Spacer(Modifier.height(16.dp))
-                        Button(onClick = { viewModel.onIntent(BudgetIntent.CreateNew) }) {
-                            Text("Novo Orçamento")
-                        }
+    }
+
+    Scaffold(
+        topBar = {
+            LargeTopAppBar(
+                title = { Text(state.budget?.number ?: "") },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Voltar")
                     }
                 }
-            } else {
+            )
+        },
+        floatingActionButton = {
+            FloatingActionButton(onClick = {
+                state.budget?.let { onNavigateToRoomForm(it.id) }
+            }) {
+                Icon(Icons.Default.Add, contentDescription = "Adicionar cômodo")
+            }
+        },
+        snackbarHost = { SnackbarHost(snackbarHostState) }
+    ) { padding ->
+        if (state.isLoading) {
+            Column(
+                modifier = Modifier.fillMaxSize().padding(padding),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .padding(horizontal = 16.dp)
+            ) {
                 Spacer(Modifier.height(16.dp))
 
                 OutlinedTextField(
@@ -114,7 +135,6 @@ fun BudgetScreen(
 
                 Spacer(Modifier.height(16.dp))
 
-                // Summary card
                 Card(
                     shape = RoundedCornerShape(16.dp),
                     modifier = Modifier.fillMaxWidth()
@@ -130,7 +150,7 @@ fun BudgetScreen(
                         Column(horizontalAlignment = Alignment.End) {
                             Text("Área total", style = MaterialTheme.typography.labelMedium)
                             Text(
-                                "${formatFloat(state.budget!!.totalArea)} m²",
+                                "${formatFloat(state.budget?.totalArea ?: 0f)} m²",
                                 style = MaterialTheme.typography.headlineSmall
                             )
                         }
@@ -139,7 +159,6 @@ fun BudgetScreen(
 
                 Spacer(Modifier.height(16.dp))
 
-                // Room list
                 LazyColumn(modifier = Modifier.weight(1f)) {
                     items(state.rooms) { room ->
                         RoomItem(room = room, onDelete = {
